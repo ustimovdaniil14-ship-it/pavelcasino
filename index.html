@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PavelCasino Dice 3D</title>
+    <title>PavelCasino 3D Dice</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
@@ -46,42 +46,53 @@
         .tab-page { display: none; width: 100%; text-align: center; max-width: 400px; }
         .tab-page.active { display: block; }
 
-        /* 3D КУБИК */
+        /* 3D СЦЕНА И КУБИК */
         .scene { 
-            width: 120px; 
-            height: 120px; 
-            perspective: 600px; 
-            margin: 20px auto; 
+            width: 130px; 
+            height: 130px; 
+            perspective: 800px; 
+            margin: 30px auto; 
         }
         .cube { 
             width: 100%; 
             height: 100%; 
             position: relative; 
             transform-style: preserve-3d; 
-            transform: translateZ(-60px);
-            transition: transform 1s cubic-bezier(0.15, 0.85, 0.35, 1.2);
-        }
-        .cube-face { 
-            position: absolute; 
-            width: 120px; 
-            height: 120px; 
-            background: #18132b; 
-            border: 3px solid #7b2cbf; 
-            border-radius: 16px; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            font-size: 45px; 
-            box-shadow: inset 0 0 15px rgba(123, 44, 191, 0.3), 0 0 15px rgba(0, 245, 212, 0.2);
+            transform: translateZ(-65px);
+            transition: transform 5s cubic-bezier(0.1, 0.85, 0.25, 1); /* Плавная физика на 5 секунд */
         }
         
-        /* Расположение граней 3D куба */
-        .cube-face-1  { transform: rotateY(0deg) translateZ(60px); }
-        .cube-face-6  { transform: rotateY(180deg) translateZ(60px); }
-        .cube-face-3  { transform: rotateY(90deg) translateZ(60px); }
-        .cube-face-4  { transform: rotateY(-90deg) translateZ(60px); }
-        .cube-face-2  { transform: rotateX(90deg) translateZ(60px); }
-        .cube-face-5  { transform: rotateX(-90deg) translateZ(60px); }
+        .cube-face { 
+            position: absolute; 
+            width: 130px; 
+            height: 130px; 
+            background: #ffffff; 
+            border: 2px solid #e0e0e0;
+            border-radius: 22px; 
+            display: grid;
+            grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+            padding: 14px;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.15), 0 0 20px rgba(123, 44, 191, 0.3);
+        }
+
+        /* Точки на гранях */
+        .dot { 
+            background: #111; 
+            border-radius: 50%; 
+            width: 20px; 
+            height: 20px; 
+            margin: auto;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .dot.red { background: #e63946; } /* Красная точка для 1-цы */
+
+        /* Расположение граней в 3D */
+        .cube-face-1  { transform: rotateY(0deg) translateZ(65px); }
+        .cube-face-6  { transform: rotateY(180deg) translateZ(65px); }
+        .cube-face-3  { transform: rotateY(90deg) translateZ(65px); }
+        .cube-face-4  { transform: rotateY(-90deg) translateZ(65px); }
+        .cube-face-2  { transform: rotateX(90deg) translateZ(65px); }
+        .cube-face-5  { transform: rotateX(-90deg) translateZ(65px); }
 
         /* Выбор Чёт / Нечёт */
         .choice-container { display: flex; gap: 10px; margin-bottom: 15px; }
@@ -126,8 +137,8 @@
 
     <div class="modal-overlay" id="welcomeModal">
         <div class="modal-card">
-            <h2>PavelCasino 3D Dice 🎲</h2>
-            <p>Добро пожаловать!<br><br>Вам начислено <b>1,000 фишек</b>. Угадывайте чёт/нечёт под крутую 3D-анимацию кубика!</p>
+            <h2>PavelCasino 🎲</h2>
+            <p>Добро пожаловать!<br><br>Вам начислено <b>1,000 фишек</b>. Угадывайте чёт/нечёт и смотрите плавный 3D-бросок кубика!</p>
             <button class="btn-action" onclick="closeModal()">Играть</button>
         </div>
     </div>
@@ -141,15 +152,45 @@
         <div id="tab-games" class="tab-page active">
             <h3 style="color: #e2dcff; margin-bottom: 5px;">3D Кости (x2)</h3>
             
-            <!-- Сцена с 3D кубиком -->
+            <!-- Полноценный 3D кубик с точками -->
             <div class="scene">
                 <div class="cube" id="cube">
-                    <div class="cube-face cube-face-1">⚀</div>
-                    <div class="cube-face cube-face-2">⚁</div>
-                    <div class="cube-face cube-face-3">⚂</div>
-                    <div class="cube-face cube-face-4">⚃</div>
-                    <div class="cube-face cube-face-5">⚄</div>
-                    <div class="cube-face cube-face-6">⚅</div>
+                    <!-- Грань 1 -->
+                    <div class="cube-face cube-face-1">
+                        <div></div><div></div><div></div>
+                        <div></div><div class="dot red"></div><div></div>
+                        <div></div><div></div><div></div>
+                    </div>
+                    <!-- Грань 6 -->
+                    <div class="cube-face cube-face-6">
+                        <div class="dot"></div><div></div><div class="dot"></div>
+                        <div class="dot"></div><div></div><div class="dot"></div>
+                        <div class="dot"></div><div></div><div class="dot"></div>
+                    </div>
+                    <!-- Грань 3 -->
+                    <div class="cube-face cube-face-3">
+                        <div class="dot"></div><div></div><div></div>
+                        <div></div><div class="dot"></div><div></div>
+                        <div></div><div></div><div class="dot"></div>
+                    </div>
+                    <!-- Грань 4 -->
+                    <div class="cube-face cube-face-4">
+                        <div class="dot"></div><div></div><div class="dot"></div>
+                        <div></div><div></div><div></div>
+                        <div class="dot"></div><div></div><div class="dot"></div>
+                    </div>
+                    <!-- Грань 2 -->
+                    <div class="cube-face cube-face-2">
+                        <div class="dot"></div><div></div><div></div>
+                        <div></div><div></div><div></div>
+                        <div></div><div></div><div class="dot"></div>
+                    </div>
+                    <!-- Грань 5 -->
+                    <div class="cube-face cube-face-5">
+                        <div class="dot"></div><div></div><div class="dot"></div>
+                        <div></div><div class="dot"></div><div></div>
+                        <div class="dot"></div><div></div><div class="dot"></div>
+                    </div>
                 </div>
             </div>
 
@@ -169,7 +210,7 @@
                 <input type="number" id="betAmount" class="bet-input" value="100" min="10" step="10">
             </div>
 
-            <button class="btn-action" id="rollBtn" onclick="rollDice()">Бросить 3D Кубик 🎲</button>
+            <button class="btn-action" id="rollBtn" onclick="rollDice()">Бросить кубик 🎲</button>
         </div>
 
         <div id="tab-wallet" class="tab-page">
@@ -215,6 +256,8 @@
         let balance = 1000;
         let currentChoice = 'even';
         let currentMode = 'random';
+        let totalX = 0;
+        let totalY = 0;
 
         function closeModal() {
             document.getElementById('welcomeModal').style.display = 'none';
@@ -289,24 +332,28 @@
                 resultNumber = Math.floor(Math.random() * 6) + 1;
             }
 
-            // Углы поворота для каждой грани куба в 3D пространстве
-            const rotations = {
+            // Углы поворота граней
+            const targetRotations = {
                 1: { x: 0, y: 0 },
-                2: { x: -90, y: 0 },
+                6: { x: 0, y: 180 },
                 3: { x: 0, y: -90 },
                 4: { x: 0, y: 90 },
-                5: { x: 90, y: 0 },
-                6: { x: 0, y: 180 }
+                2: { x: -90, y: 0 },
+                5: { x: 90, y: 0 }
             };
 
             const cube = document.getElementById('cube');
             
-            // Добавляем случайные обороты для динамичного кручения
-            let randomX = (Math.floor(Math.random() * 4) + 4) * 360 + rotations[resultNumber].x;
-            let randomY = (Math.floor(Math.random() * 4) + 4) * 360 + rotations[resultNumber].y;
+            // Накапливаем обороты, чтобы куб постоянно вращался вперед
+            totalX += (Math.floor(Math.random() * 5) + 6) * 360;
+            totalY += (Math.floor(Math.random() * 5) + 6) * 360;
 
-            cube.style.transform = `translateZ(-60px) rotateX(${randomX}deg) rotateY(${randomY}deg)`;
+            let finalX = totalX + targetRotations[resultNumber].x;
+            let finalY = totalY + targetRotations[resultNumber].y;
 
+            cube.style.transform = `translateZ(-65px) rotateX(${finalX}deg) rotateY(${finalY}deg)`;
+
+            // Ровно 5 секунд плавной анимации
             setTimeout(() => {
                 let isEven = resultNumber % 2 === 0;
                 let userWon = (currentChoice === 'even' && isEven) || (currentChoice === 'odd' && !isEven);
@@ -321,7 +368,7 @@
 
                 updateBalance();
                 btn.disabled = false;
-            }, 1000);
+            }, 5000);
         }
 
         function checkBonusTimer() {
