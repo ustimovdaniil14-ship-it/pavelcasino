@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PavelCasino Mini App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #0d0f12; color: #ffffff; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        
+        /* Всплывающее приветствие */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
+        .modal-card { background: linear-gradient(145deg, #1a1d24, #121419); border: 1px solid #d4af37; border-radius: 16px; padding: 25px; text-align: center; max-width: 320px; box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2); }
+        .modal-card h2 { color: #d4af37; margin-bottom: 12px; font-size: 22px; }
+        .modal-card p { font-size: 14px; color: #cccccc; line-height: 1.5; margin-bottom: 20px; }
+        .btn-gold { background: linear-gradient(45deg, #d4af37, #f3e5ab); color: #000; border: none; padding: 12px 24px; font-weight: bold; border-radius: 8px; font-size: 15px; cursor: pointer; width: 100%; }
+
+        /* Шапка с балансом */
+        .header { background: #161920; padding: 15px; text-align: center; border-bottom: 1px solid #262a36; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-weight: bold; color: #d4af37; font-size: 18px; }
+        .balance-badge { background: #222733; border: 1px solid #d4af37; padding: 6px 12px; border-radius: 20px; color: #f3e5ab; font-weight: bold; font-size: 14px; }
+
+        /* Контент вкладок */
+        .content { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .tab-page { display: none; width: 100%; text-align: center; }
+        .tab-page.active { display: block; }
+
+        /* Слот машина */
+        .slots-container { background: #161920; border: 2px solid #262a36; border-radius: 12px; padding: 20px; margin: 20px 0; display: flex; justify-content: center; gap: 10px; }
+        .slot { width: 60px; height: 70px; background: #0d0f12; border: 1px solid #d4af37; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 32px; }
+
+        /* Нижняя навигация (Вкладки) */
+        .nav-tabs { display: flex; background: #161920; border-top: 1px solid #262a36; height: 60px; }
+        .tab-btn { flex: 1; background: none; border: none; color: #888888; font-size: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; }
+        .tab-btn.active { color: #d4af37; font-weight: bold; }
+        .tab-btn span { font-size: 18px; }
+    </style>
+</head>
+<body>
+
+    <!-- Приветственное окно -->
+    <div class="modal-overlay" id="welcomeModal">
+        <div class="modal-card">
+            <h2>PavelCasino 🎰</h2>
+            <p>Добро пожаловать в официальный Mini App!<br><br>Вам начислено <b>1,000 бонусов</b> на стартовый баланс. Испытайте свою удачу прямо сейчас!</p>
+            <button class="btn-gold" onclick="closeModal()">Начать играть</button>
+        </div>
+    </div>
+
+    <!-- Шапка -->
+    <div class="header">
+        <div class="logo">PavelCasino</div>
+        <div class="balance-badge">💰 <span id="balance">1000</span></div>
+    </div>
+
+    <!-- Основной экран с вкладками -->
+    <div class="content">
+        <!-- Вкладка 1: Игры -->
+        <div id="tab-games" class="tab-page active">
+            <h3>Слот-Машина</h3>
+            <div class="slots-container">
+                <div class="slot" id="s1">🎰</div>
+                <div class="slot" id="s2">🎰</div>
+                <div class="slot" id="s3">🎰</div>
+            </div>
+            <button class="btn-gold" onclick="spinSlots()">Крутить (100 💰)</button>
+        </div>
+
+        <!-- Вкладка 2: Баланс -->
+        <div id="tab-wallet" class="tab-page">
+            <h3>Ваш Баланс</h3>
+            <p style="margin: 15px 0; color: #aaa;">У вас на счету: <b id="walletBalance" style="color:#d4af37;">1000</b> фишек</p>
+            <button class="btn-gold" onclick="addBonus()">Забрать дневной бонус (+500 💰)</button>
+        </div>
+
+        <!-- Вкладка 3: Профиль -->
+        <div id="tab-profile" class="tab-page">
+            <h3>Профиль Игрока</h3>
+            <p style="margin-top: 15px; color: #aaa;">Статус: <span style="color:#d4af37;">Игрок PavelCasino</span></p>
+        </div>
+    </div>
+
+    <!-- Навигация по вкладкам -->
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('games', this)">
+            <span>🎰</span> Игры
+        </button>
+        <button class="tab-btn" onclick="switchTab('wallet', this)">
+            <span>💰</span> Баланс
+        </button>
+        <button class="tab-btn" onclick="switchTab('profile', this)">
+            <span>👤</span> Профиль
+        </button>
+    </div>
+
+    <script>
+        let balance = 1000;
+        const symbols = ['🎰', '7️⃣', '💎', '🍋', '🔔'];
+
+        function closeModal() {
+            document.getElementById('welcomeModal').style.display = 'none';
+        }
+
+        function switchTab(tabName, btn) {
+            document.querySelectorAll('.tab-page').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById('tab-' + tabName).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        function updateBalance() {
+            document.getElementById('balance').innerText = balance;
+            document.getElementById('walletBalance').innerText = balance;
+        }
+
+        function spinSlots() {
+            if (balance < 100) {
+                alert('Недостаточно баланса!');
+                return;
+            }
+            balance -= 100;
+            updateBalance();
+
+            const r1 = symbols[Math.floor(Math.random() * symbols.length)];
+            const r2 = symbols[Math.floor(Math.random() * symbols.length)];
+            const r3 = symbols[Math.floor(Math.random() * symbols.length)];
+
+            document.getElementById('s1').innerText = r1;
+            document.getElementById('s2').innerText = r2;
+            document.getElementById('s3').innerText = r3;
+
+            if (r1 === r2 && r2 === r3) {
+                balance += 1000;
+                alert('🎉 ДЖЕКПОТ! Вы выиграли 1000 фишек!');
+                updateBalance();
+            }
+        }
+
+        function addBonus() {
+            balance += 500;
+            alert('Вы получили +500 бонусов!');
+            updateBalance();
+        }
+    </script>
+</body>
+</html>
