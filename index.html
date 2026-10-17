@@ -6,22 +6,45 @@
     <title>PavelCasino Mini App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #0d0f12; color: #ffffff; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        
+        /* Новая палитра: Темно-фиолетовый фон с неоновыми акцентами */
+        body { 
+            background: #0f0c1b; 
+            color: #ffffff; 
+            display: flex; 
+            flex-direction: column; 
+            height: 100vh; 
+            overflow: hidden; 
+        }
         
         /* Всплывающее приветствие */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
-        .modal-card { background: linear-gradient(145deg, #1a1d24, #121419); border: 1px solid #d4af37; border-radius: 16px; padding: 25px; text-align: center; max-width: 320px; box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2); }
-        .modal-card h2 { color: #d4af37; margin-bottom: 12px; font-size: 22px; }
-        .modal-card p { font-size: 14px; color: #cccccc; line-height: 1.5; margin-bottom: 20px; }
-        .btn-gold { background: linear-gradient(45deg, #d4af37, #f3e5ab); color: #000; border: none; padding: 12px 24px; font-weight: bold; border-radius: 8px; font-size: 15px; cursor: pointer; width: 100%; transition: 0.2s; }
-        .btn-gold:active { transform: scale(0.96); }
-        .btn-gold:disabled { opacity: 0.5; cursor: not-allowed; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 3, 12, 0.9); display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
+        .modal-card { background: #18132b; border: 1px solid #7b2cbf; border-radius: 20px; padding: 25px; text-align: center; max-width: 320px; box-shadow: 0 0 30px rgba(123, 44, 191, 0.4); }
+        .modal-card h2 { color: #00f5d4; margin-bottom: 12px; font-size: 22px; text-shadow: 0 0 10px rgba(0, 245, 212, 0.5); }
+        .modal-card p { font-size: 14px; color: #b8b2d8; line-height: 1.5; margin-bottom: 20px; }
+        
+        /* Основная неоновая кнопка */
+        .btn-action { 
+            background: linear-gradient(135deg, #7b2cbf, #5a189a); 
+            color: #ffffff; 
+            border: 1px solid #9d4edd; 
+            padding: 14px 24px; 
+            font-weight: 700; 
+            border-radius: 12px; 
+            font-size: 15px; 
+            cursor: pointer; 
+            width: 100%; 
+            transition: all 0.2s ease; 
+            box-shadow: 0 4px 15px rgba(123, 44, 191, 0.4);
+        }
+        .btn-action:active { transform: scale(0.97); opacity: 0.9; }
+        .btn-action:disabled { background: #2b2640; border-color: #3d355c; color: #6c638a; box-shadow: none; cursor: not-allowed; }
 
         /* Шапка с балансом */
-        .header { background: #161920; padding: 15px; text-align: center; border-bottom: 1px solid #262a36; display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-weight: bold; color: #d4af37; font-size: 18px; }
-        .balance-badge { background: #222733; border: 1px solid #d4af37; padding: 6px 12px; border-radius: 20px; color: #f3e5ab; font-weight: bold; font-size: 14px; }
+        .header { background: #140f26; padding: 15px 20px; text-align: center; border-bottom: 1px solid #281e47; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-weight: 800; color: #00f5d4; font-size: 18px; letter-spacing: 0.5px; text-shadow: 0 0 8px rgba(0, 245, 212, 0.4); }
+        .balance-badge { background: #1f1838; border: 1px solid #00f5d4; padding: 6px 14px; border-radius: 20px; color: #00f5d4; font-weight: bold; font-size: 14px; box-shadow: 0 0 10px rgba(0, 245, 212, 0.2); }
 
         /* Контент вкладок */
         .content { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; align-items: center; justify-content: center; }
@@ -29,35 +52,56 @@
         .tab-page.active { display: block; }
 
         /* Слот машина */
-        .slots-container { background: #161920; border: 2px solid #262a36; border-radius: 12px; padding: 20px; margin: 15px 0; display: flex; justify-content: center; gap: 10px; box-shadow: inset 0 5px 15px rgba(0,0,0,0.5); }
-        .slot { width: 70px; height: 80px; background: #0d0f12; border: 1px solid #d4af37; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 36px; transition: transform 0.1s; }
+        .slots-container { 
+            background: #140f26; 
+            border: 2px solid #3c2a63; 
+            border-radius: 16px; 
+            padding: 20px; 
+            margin: 15px 0; 
+            display: flex; 
+            justify-content: center; 
+            gap: 12px; 
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 0 15px rgba(123, 44, 191, 0.2); 
+        }
+        .slot { 
+            width: 75px; 
+            height: 85px; 
+            background: #0a0812; 
+            border: 2px solid #7b2cbf; 
+            border-radius: 12px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            font-size: 38px; 
+            box-shadow: 0 0 10px rgba(123, 44, 191, 0.3);
+        }
         .slot.spinning { animation: shake 0.1s infinite; }
 
         @keyframes shake {
             0% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
+            50% { transform: translateY(-4px); }
             100% { transform: translateY(0); }
         }
 
         /* Выбор ставки */
-        .bet-control { background: #161920; border: 1px solid #262a36; border-radius: 12px; padding: 12px; margin-bottom: 15px; }
-        .bet-title { font-size: 13px; color: #aaa; margin-bottom: 8px; }
-        .bet-buttons { display: flex; gap: 6px; margin-bottom: 8px; justify-content: center; }
-        .bet-btn { background: #222733; border: 1px solid #d4af37; color: #f3e5ab; padding: 6px 10px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; }
-        .bet-btn:active { background: #d4af37; color: #000; }
-        .bet-input { width: 100%; background: #0d0f12; border: 1px solid #d4af37; color: #fff; padding: 8px; border-radius: 6px; text-align: center; font-size: 16px; font-weight: bold; }
+        .bet-control { background: #140f26; border: 1px solid #281e47; border-radius: 14px; padding: 14px; margin-bottom: 15px; }
+        .bet-title { font-size: 13px; color: #a095c4; margin-bottom: 10px; }
+        .bet-buttons { display: flex; gap: 8px; margin-bottom: 10px; justify-content: center; }
+        .bet-btn { background: #1f1838; border: 1px solid #5a189a; color: #00f5d4; padding: 8px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px; transition: 0.2s; }
+        .bet-btn:active { background: #7b2cbf; color: #fff; }
+        .bet-input { width: 100%; background: #0a0812; border: 1px solid #7b2cbf; color: #00f5d4; padding: 10px; border-radius: 8px; text-align: center; font-size: 16px; font-weight: bold; outline: none; }
 
         /* Админ панель элементы */
-        .admin-box { background: #161920; border: 1px dashed #d4af37; border-radius: 12px; padding: 15px; margin-top: 10px; text-align: left; }
-        .admin-box h4 { color: #d4af37; margin-bottom: 10px; text-align: center; }
-        .admin-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 14px; }
-        .admin-row select, .admin-row button { background: #222733; color: #fff; border: 1px solid #d4af37; padding: 6px 10px; border-radius: 6px; cursor: pointer; }
+        .admin-box { background: #140f26; border: 1px dashed #7b2cbf; border-radius: 14px; padding: 16px; margin-top: 10px; text-align: left; }
+        .admin-box h4 { color: #00f5d4; margin-bottom: 12px; text-align: center; }
+        .admin-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 14px; color: #d0c9eb; }
+        .admin-row select, .admin-row button { background: #1f1838; color: #00f5d4; border: 1px solid #7b2cbf; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; }
 
-        /* Нижняя навигация (Вкладки) */
-        .nav-tabs { display: flex; background: #161920; border-top: 1px solid #262a36; height: 60px; }
-        .tab-btn { flex: 1; background: none; border: none; color: #888888; font-size: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; }
-        .tab-btn.active { color: #d4af37; font-weight: bold; }
-        .tab-btn span { font-size: 18px; }
+        /* Нижняя навигация */
+        .nav-tabs { display: flex; background: #140f26; border-top: 1px solid #281e47; height: 65px; }
+        .tab-btn { flex: 1; background: none; border: none; color: #6c638a; font-size: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; transition: 0.2s; }
+        .tab-btn.active { color: #00f5d4; font-weight: bold; }
+        .tab-btn span { font-size: 20px; }
     </style>
 </head>
 <body>
@@ -66,22 +110,22 @@
     <div class="modal-overlay" id="welcomeModal">
         <div class="modal-card">
             <h2>PavelCasino 🎰</h2>
-            <p>Добро пожаловать в официальный Mini App!<br><br>Вам начислено <b>1,000 бонусов</b> на стартовый баланс. Испытайте свою удачу прямо сейчас!</p>
-            <button class="btn-gold" onclick="closeModal()">Начать играть</button>
+            <p>Добро пожаловать в обновленное Mini App!<br><br>Вам начислено <b>1,000 бонусов</b> на стартовый баланс. Испытайте свою удачу!</p>
+            <button class="btn-action" onclick="closeModal()">Начать играть</button>
         </div>
     </div>
 
     <!-- Шапка -->
     <div class="header">
         <div class="logo">PavelCasino</div>
-        <div class="balance-badge">💰 <span id="balance">1000</span></div>
+        <div class="balance-badge">💎 <span id="balance">1000</span></div>
     </div>
 
-    <!-- Основной экран с вкладками -->
+    <!-- Основной экран -->
     <div class="content">
         <!-- Вкладка 1: Игры -->
         <div id="tab-games" class="tab-page active">
-            <h3>Слот-Машина</h3>
+            <h3 style="color: #e2dcff; margin-bottom: 5px;">Слот-Машина</h3>
             
             <div class="slots-container">
                 <div class="slot" id="s1">🎰</div>
@@ -101,25 +145,25 @@
                 <input type="number" id="betAmount" class="bet-input" value="100" min="10" step="10">
             </div>
 
-            <button class="btn-gold" id="spinBtn" onclick="spinSlots()">Крутить слоты 🎰</button>
+            <button class="btn-action" id="spinBtn" onclick="spinSlots()">Крутить слоты 🎰</button>
         </div>
 
         <!-- Вкладка 2: Кошелек -->
         <div id="tab-wallet" class="tab-page">
-            <h3>Кошелек</h3>
-            <p style="margin: 15px 0; color: #aaa;">У вас на счету: <b id="walletBalance" style="color:#d4af37;">1000</b> фишек</p>
-            <button class="btn-gold" id="bonusBtn" onclick="addBonus()">Забрать дневной бонус (+500 💰)</button>
-            <p id="bonusTimer" style="margin-top: 10px; font-size: 12px; color: #888;"></p>
+            <h3 style="color: #e2dcff;">Кошелек</h3>
+            <p style="margin: 15px 0; color: #a095c4;">У вас на счету: <b id="walletBalance" style="color:#00f5d4;">1000</b> фишек</p>
+            <button class="btn-action" id="bonusBtn" onclick="addBonus()">Забрать дневной бонус (+500 💎)</button>
+            <p id="bonusTimer" style="margin-top: 12px; font-size: 13px; color: #887fa3;"></p>
         </div>
 
         <!-- Вкладка 3: Админ-панель -->
         <div id="tab-profile" class="tab-page">
-            <h3>⚙️ Админ-Панель</h3>
+            <h3 style="color: #e2dcff;">⚙️ Админ-Панель</h3>
             <div class="admin-box">
                 <h4>Управление игрой</h4>
                 <div class="admin-row">
                     <span>Накрутка баланса:</span>
-                    <button onclick="adminAddMoney()" style="background:#d4af37; color:#000; font-weight:bold;">+10,000 💰</button>
+                    <button onclick="adminAddMoney()">+10,000 💎</button>
                 </div>
                 <div class="admin-row" style="margin-top: 15px;">
                     <span>Шанс победы:</span>
@@ -133,13 +177,13 @@
         </div>
     </div>
 
-    <!-- Навигация по вкладкам -->
+    <!-- Навигация -->
     <div class="nav-tabs">
         <button class="tab-btn active" onclick="switchTab('games', this)">
             <span>🎰</span> Игры
         </button>
         <button class="tab-btn" onclick="switchTab('wallet', this)">
-            <span>💰</span> Баланс
+            <span>💎</span> Баланс
         </button>
         <button class="tab-btn" onclick="switchTab('profile', this)">
             <span>⚙️</span> Админ
@@ -148,7 +192,7 @@
 
     <script>
         let balance = 1000;
-        let currentMode = 'random'; // Режимы: random, win, lose
+        let currentMode = 'random';
         const symbols = ['🎰', '7️⃣', '💎', '🍋', '🔔'];
 
         function closeModal() {
@@ -208,7 +252,6 @@
             const s2 = document.getElementById('s2');
             const s3 = document.getElementById('s3');
 
-            // Включаем анимацию
             s1.classList.add('spinning');
             s2.classList.add('spinning');
             s3.classList.add('spinning');
@@ -244,7 +287,7 @@
                 if (r1 === r2 && r2 === r3) {
                     let winAmount = bet * 10;
                     balance += winAmount;
-                    alert(`🎉 ДЖЕКПОТ! Вы выиграли ${winAmount} 💰!`);
+                    alert(`🎉 ДЖЕКПОТ! Вы выиграли ${winAmount} 💎!`);
                     updateBalance();
                 }
 
@@ -252,7 +295,6 @@
             }, 1000);
         }
 
-        // Логика ежедневного бонуса (1 раз в 24 часа)
         function checkBonusTimer() {
             const lastBonus = localStorage.getItem('lastBonusTime');
             const bonusBtn = document.getElementById('bonusBtn');
@@ -291,7 +333,6 @@
             alert('🎉 Вы получили ежедневный бонус +500 фишек!');
         }
 
-        // Инициализация при старте
         checkBonusTimer();
     </script>
 </body>
