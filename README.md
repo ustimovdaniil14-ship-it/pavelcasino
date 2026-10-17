@@ -1,2 +1,0 @@
-# pavelcasino
-pavelcasino mini app
