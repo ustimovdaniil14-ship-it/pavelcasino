@@ -3,55 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PavelCasino 3D Dice</title>
+    <title>PavelCasino — Elite Club</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
         
+        :root {
+            --bg-table: #0a1f16;
+            --bg-card: rgba(14, 43, 31, 0.75);
+            --gold-primary: #d4af37;
+            --gold-light: #f3e5ab;
+            --gold-dark: #997a15;
+            --border-gold: rgba(212, 175, 55, 0.3);
+            --text-main: #fcfbfa;
+            --text-muted: #b0c4bc;
+        }
+
         body { 
-            background: #0f0c1b; 
-            color: #ffffff; 
+            background: var(--bg-table); 
+            background-image: 
+                radial-gradient(circle at 50% 30%, #113828 0%, #0a1f16 70%),
+                repeating-linear-gradient(45deg, rgba(255,255,255,0.01) 0, rgba(255,255,255,0.01) 2px, transparent 0, transparent 4px);
+            color: var(--text-main); 
             display: flex; 
             flex-direction: column; 
             height: 100vh; 
             overflow: hidden; 
         }
         
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 3, 12, 0.9); display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
-        .modal-card { background: #18132b; border: 1px solid #7b2cbf; border-radius: 20px; padding: 25px; text-align: center; max-width: 320px; box-shadow: 0 0 30px rgba(123, 44, 191, 0.4); }
-        .modal-card h2 { color: #00f5d4; margin-bottom: 12px; font-size: 22px; text-shadow: 0 0 10px rgba(0, 245, 212, 0.5); }
-        .modal-card p { font-size: 14px; color: #b8b2d8; line-height: 1.5; margin-bottom: 20px; }
+        /* Модальное окно казино */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 15, 11, 0.9); backdrop-filter: blur(10px); display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
+        .modal-card { background: linear-gradient(145deg, #123524, #0b2217); border: 1px solid var(--gold-primary); border-radius: 20px; padding: 30px; text-align: center; max-width: 340px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(212, 175, 55, 0.15); }
+        .modal-card h2 { color: var(--gold-light); margin-bottom: 12px; font-size: 24px; font-weight: 700; letter-spacing: 0.5px; }
+        .modal-card p { font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 24px; }
         
+        /* Элитные золотые кнопки */
         .btn-action { 
-            background: linear-gradient(135deg, #7b2cbf, #5a189a); 
-            color: #ffffff; 
-            border: 1px solid #9d4edd; 
-            padding: 14px 24px; 
-            font-weight: 700; 
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark)); 
+            color: #1a1a1a; 
+            border: 1px solid var(--gold-light); 
+            padding: 15px 24px; 
+            font-weight: 800; 
             border-radius: 12px; 
             font-size: 15px; 
             cursor: pointer; 
             width: 100%; 
-            transition: all 0.2s ease; 
-            box-shadow: 0 4px 15px rgba(123, 44, 191, 0.4);
+            transition: all 0.25s ease; 
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         .btn-action:active { transform: scale(0.97); opacity: 0.9; }
-        .btn-action:disabled { background: #2b2640; border-color: #3d355c; color: #6c638a; box-shadow: none; cursor: not-allowed; }
+        .btn-action:disabled { background: #1c2b23; border-color: #2b3d32; color: #5a7063; box-shadow: none; cursor: not-allowed; }
 
-        .header { background: #140f26; padding: 15px 20px; text-align: center; border-bottom: 1px solid #281e47; display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-weight: 800; color: #00f5d4; font-size: 18px; letter-spacing: 0.5px; text-shadow: 0 0 8px rgba(0, 245, 212, 0.4); }
-        .balance-badge { background: #1f1838; border: 1px solid #00f5d4; padding: 6px 14px; border-radius: 20px; color: #00f5d4; font-weight: bold; font-size: 14px; box-shadow: 0 0 10px rgba(0, 245, 212, 0.2); }
+        /* Шапка */
+        .header { background: rgba(8, 26, 18, 0.9); backdrop-filter: blur(10px); padding: 15px 20px; border-bottom: 1px solid var(--border-gold); display: flex; justify-content: space-between; align-items: center; z-index: 10; }
+        .logo { font-weight: 800; color: var(--gold-light); font-size: 18px; letter-spacing: 1.5px; text-transform: uppercase; }
+        .balance-badge { background: rgba(14, 43, 31, 0.9); border: 1px solid var(--gold-primary); padding: 7px 15px; border-radius: 20px; color: var(--gold-light); font-weight: 700; font-size: 14px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 6px; }
 
+        /* Контент */
         .content { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .tab-page { display: none; width: 100%; text-align: center; max-width: 400px; }
-        .tab-page.active { display: block; }
+        .tab-page { display: none; width: 100%; text-align: center; max-width: 400px; animation: fadeIn 0.3s ease; }
+        .tab-page.active { display: flex; flex-direction: column; align-items: center; }
 
-        /* 3D СЦЕНА И КУБИК */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ЗАКРЫТЫЙ 3D КУБ В ЭЛЕГАНТНОМ СТИЛЕ */
         .scene { 
             width: 130px; 
             height: 130px; 
-            perspective: 800px; 
-            margin: 30px auto; 
+            perspective: 1000px; 
+            margin: 25px auto; 
         }
         .cube { 
             width: 100%; 
@@ -59,34 +81,35 @@
             position: relative; 
             transform-style: preserve-3d; 
             transform: translateZ(-65px);
-            transition: transform 5s cubic-bezier(0.1, 0.85, 0.25, 1); /* Плавная физика на 5 секунд */
+            transition: transform 5s cubic-bezier(0.15, 0.85, 0.15, 1);
         }
         
         .cube-face { 
             position: absolute; 
             width: 130px; 
             height: 130px; 
-            background: #ffffff; 
-            border: 2px solid #e0e0e0;
-            border-radius: 22px; 
+            background: linear-gradient(135deg, #fdfbf7, #e8e2d5); 
+            border: 2px solid #d4c5a9;
+            border-radius: 20px; 
             display: grid;
             grid-template: repeat(3, 1fr) / repeat(3, 1fr);
-            padding: 14px;
-            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.15), 0 0 20px rgba(123, 44, 191, 0.3);
+            padding: 15px;
+            backface-visibility: hidden;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.15);
         }
 
-        /* Точки на гранях */
+        /* Точки кубика */
         .dot { 
-            background: #111; 
+            background: #2b2b2b; 
             border-radius: 50%; 
             width: 20px; 
             height: 20px; 
             margin: auto;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
         }
-        .dot.red { background: #e63946; } /* Красная точка для 1-цы */
+        .dot.gold { background: #b8860b; } /* Изысканные золотые точки для единицы */
 
-        /* Расположение граней в 3D */
+        /* Позиционирование граней */
         .cube-face-1  { transform: rotateY(0deg) translateZ(65px); }
         .cube-face-6  { transform: rotateY(180deg) translateZ(65px); }
         .cube-face-3  { transform: rotateY(90deg) translateZ(65px); }
@@ -95,41 +118,44 @@
         .cube-face-5  { transform: rotateX(-90deg) translateZ(65px); }
 
         /* Выбор Чёт / Нечёт */
-        .choice-container { display: flex; gap: 10px; margin-bottom: 15px; }
+        .choice-container { display: flex; gap: 10px; margin-bottom: 18px; width: 100%; }
         .choice-btn { 
             flex: 1; 
-            background: #140f26; 
-            border: 2px solid #3c2a63; 
-            color: #b8b2d8; 
-            padding: 12px; 
+            background: var(--bg-card); 
+            border: 1px solid var(--border-gold); 
+            color: var(--text-muted); 
+            padding: 13px; 
             border-radius: 12px; 
-            font-weight: bold; 
+            font-weight: 700; 
             cursor: pointer; 
-            font-size: 14px;
-            transition: 0.2s;
+            font-size: 13px;
+            transition: all 0.2s;
         }
         .choice-btn.selected { 
-            background: #1f1838; 
-            border-color: #00f5d4; 
-            color: #00f5d4; 
-            box-shadow: 0 0 10px rgba(0, 245, 212, 0.3);
+            background: rgba(212, 175, 55, 0.15); 
+            border-color: var(--gold-primary); 
+            color: var(--gold-light); 
+            box-shadow: 0 0 12px rgba(212, 175, 55, 0.2);
         }
 
-        .bet-control { background: #140f26; border: 1px solid #281e47; border-radius: 14px; padding: 14px; margin-bottom: 15px; }
-        .bet-title { font-size: 13px; color: #a095c4; margin-bottom: 10px; }
+        /* Блок ставки */
+        .bet-control { background: var(--bg-card); border: 1px solid var(--border-gold); border-radius: 16px; padding: 15px; margin-bottom: 18px; width: 100%; }
+        .bet-title { font-size: 11px; color: var(--text-muted); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
         .bet-buttons { display: flex; gap: 8px; margin-bottom: 10px; justify-content: center; }
-        .bet-btn { background: #1f1838; border: 1px solid #5a189a; color: #00f5d4; padding: 8px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px; transition: 0.2s; }
-        .bet-btn:active { background: #7b2cbf; color: #fff; }
-        .bet-input { width: 100%; background: #0a0812; border: 1px solid #7b2cbf; color: #00f5d4; padding: 10px; border-radius: 8px; text-align: center; font-size: 16px; font-weight: bold; outline: none; }
+        .bet-btn { background: rgba(18, 53, 36, 0.9); border: 1px solid var(--border-gold); color: var(--gold-light); padding: 8px 0; flex: 1; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 13px; transition: 0.2s; }
+        .bet-btn:active { background: var(--gold-primary); color: #000; }
+        .bet-input { width: 100%; background: #05120c; border: 1px solid var(--gold-primary); color: var(--gold-light); padding: 12px; border-radius: 10px; text-align: center; font-size: 17px; font-weight: 800; outline: none; box-shadow: inset 0 2px 5px rgba(0,0,0,0.8); }
 
-        .admin-box { background: #140f26; border: 1px dashed #7b2cbf; border-radius: 14px; padding: 16px; margin-top: 10px; text-align: left; }
-        .admin-box h4 { color: #00f5d4; margin-bottom: 12px; text-align: center; }
-        .admin-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 14px; color: #d0c9eb; }
-        .admin-row select, .admin-row button { background: #1f1838; color: #00f5d4; border: 1px solid #7b2cbf; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        /* Админ панель */
+        .admin-box { background: var(--bg-card); border: 1px dashed var(--gold-primary); border-radius: 16px; padding: 18px; margin-top: 10px; text-align: left; width: 100%; }
+        .admin-box h4 { color: var(--gold-light); margin-bottom: 12px; text-align: center; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+        .admin-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 13px; color: var(--text-main); font-weight: 600; }
+        .admin-row select, .admin-row button { background: rgba(18, 53, 36, 0.9); color: var(--gold-light); border: 1px solid var(--gold-primary); padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: 700; }
 
-        .nav-tabs { display: flex; background: #140f26; border-top: 1px solid #281e47; height: 65px; }
-        .tab-btn { flex: 1; background: none; border: none; color: #6c638a; font-size: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; transition: 0.2s; }
-        .tab-btn.active { color: #00f5d4; font-weight: bold; }
+        /* Навигация */
+        .nav-tabs { display: flex; background: rgba(8, 26, 18, 0.95); backdrop-filter: blur(10px); border-top: 1px solid var(--border-gold); height: 70px; padding-bottom: 5px; z-index: 10; }
+        .tab-btn { flex: 1; background: none; border: none; color: var(--text-muted); font-size: 11px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; transition: 0.2s; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .tab-btn.active { color: var(--gold-light); text-shadow: 0 0 8px rgba(212, 175, 55, 0.4); }
         .tab-btn span { font-size: 20px; }
     </style>
 </head>
@@ -137,28 +163,29 @@
 
     <div class="modal-overlay" id="welcomeModal">
         <div class="modal-card">
-            <h2>PavelCasino 🎲</h2>
-            <p>Добро пожаловать!<br><br>Вам начислено <b>1,000 фишек</b>. Угадывайте чёт/нечёт и смотрите плавный 3D-бросок кубика!</p>
-            <button class="btn-action" onclick="closeModal()">Играть</button>
+            <h2>PavelCasino Elite</h2>
+            <p>Добро пожаловать в элитный клуб костей.<br><br>Вам зачислено <b>1,000 фишек</b> на счет. Сделайте свой выбор!</p>
+            <button class="btn-action" onclick="closeModal()">Войти за стол</button>
         </div>
     </div>
 
     <div class="header">
-        <div class="logo">PavelCasino</div>
+        <div class="logo">Pavel Casino</div>
         <div class="balance-badge">💎 <span id="balance">1000</span></div>
     </div>
 
     <div class="content">
+        <!-- Игры -->
         <div id="tab-games" class="tab-page active">
-            <h3 style="color: #e2dcff; margin-bottom: 5px;">3D Кости (x2)</h3>
+            <h3 style="color: var(--gold-light); font-size: 15px; letter-spacing: 1px; font-weight: 700; text-transform: uppercase;">Классический бросок кости</h3>
             
-            <!-- Полноценный 3D кубик с точками -->
+            <!-- Полноценный закрытый куб в классическом дизайне -->
             <div class="scene">
                 <div class="cube" id="cube">
                     <!-- Грань 1 -->
                     <div class="cube-face cube-face-1">
                         <div></div><div></div><div></div>
-                        <div></div><div class="dot red"></div><div></div>
+                        <div></div><div class="dot gold"></div><div></div>
                         <div></div><div></div><div></div>
                     </div>
                     <!-- Грань 6 -->
@@ -200,7 +227,7 @@
             </div>
 
             <div class="bet-control">
-                <div class="bet-title">Сумма ставки:</div>
+                <div class="bet-title">Сумма ставки (Коэффициент X2)</div>
                 <div class="bet-buttons">
                     <button class="bet-btn" onclick="setBet(50)">50</button>
                     <button class="bet-btn" onclick="setBet(100)">100</button>
@@ -210,30 +237,32 @@
                 <input type="number" id="betAmount" class="bet-input" value="100" min="10" step="10">
             </div>
 
-            <button class="btn-action" id="rollBtn" onclick="rollDice()">Бросить кубик 🎲</button>
+            <button class="btn-action" id="rollBtn" onclick="rollDice()">Бросить кость (5 сек) 🎲</button>
         </div>
 
+        <!-- Кошелек -->
         <div id="tab-wallet" class="tab-page">
-            <h3 style="color: #e2dcff;">Кошелек</h3>
-            <p style="margin: 15px 0; color: #a095c4;">Баланс: <b id="walletBalance" style="color:#00f5d4;">1000</b> фишек</p>
-            <button class="btn-action" id="bonusBtn" onclick="addBonus()">Забрать дневной бонус (+500 💎)</button>
-            <p id="bonusTimer" style="margin-top: 12px; font-size: 13px; color: #887fa3;"></p>
+            <h3 style="color: var(--gold-light); margin-bottom: 10px; text-transform: uppercase;">Касса клуба</h3>
+            <p style="margin: 15px 0; color: var(--text-muted);">Баланс счета: <b id="walletBalance" style="color:var(--gold-light); font-size: 20px;">1000</b> фишек</p>
+            <button class="btn-action" id="bonusBtn" onclick="addBonus()">Получить бонус (+500 💎)</button>
+            <p id="bonusTimer" style="margin-top: 15px; font-size: 13px; color: var(--text-muted);"></p>
         </div>
 
+        <!-- Админ -->
         <div id="tab-profile" class="tab-page">
-            <h3 style="color: #e2dcff;">⚙️ Админ-Панель</h3>
+            <h3 style="color: var(--gold-light); text-transform: uppercase;">⚙️ Управление столом</h3>
             <div class="admin-box">
-                <h4>Настройки</h4>
+                <h4>Панель организатора</h4>
                 <div class="admin-row">
-                    <span>Накрутка баланса:</span>
+                    <span>Пополнить баланс:</span>
                     <button onclick="adminAddMoney()">+10,000 💎</button>
                 </div>
-                <div class="admin-row" style="margin-top: 15px;">
-                    <span>Режим броска:</span>
+                <div class="admin-row" style="margin-top: 12px;">
+                    <span>Режим выпадения:</span>
                     <select id="winChance" onchange="changeChance()">
-                        <option value="random">Обычный (Рандом)</option>
-                        <option value="win">Всегда выигрыш</option>
-                        <option value="lose">Всегда проигрыш</option>
+                        <option value="random">Случайный (Рандом)</option>
+                        <option value="win">Гарантированная победа</option>
+                        <option value="lose">Гарантированный проигрыш</option>
                     </select>
                 </div>
             </div>
@@ -242,10 +271,10 @@
 
     <div class="nav-tabs">
         <button class="tab-btn active" onclick="switchTab('games', this)">
-            <span>🎲</span> Кости
+            <span>🎲</span> Стол
         </button>
         <button class="tab-btn" onclick="switchTab('wallet', this)">
-            <span>💎</span> Баланс
+            <span>💎</span> Касса
         </button>
         <button class="tab-btn" onclick="switchTab('profile', this)">
             <span>⚙️</span> Админ
@@ -296,7 +325,7 @@
         function adminAddMoney() {
             balance += 10000;
             updateBalance();
-            alert('⚙️ Админ: Начислено 10,000 фишек!');
+            alert('⚙️ Админ: Зачислено 10,000 фишек!');
         }
 
         function changeChance() {
@@ -313,7 +342,7 @@
             }
 
             if (balance < bet) {
-                alert('Недостаточно баланса!');
+                alert('Недостаточно фишек на балансе!');
                 return;
             }
 
@@ -332,7 +361,6 @@
                 resultNumber = Math.floor(Math.random() * 6) + 1;
             }
 
-            // Углы поворота граней
             const targetRotations = {
                 1: { x: 0, y: 0 },
                 6: { x: 0, y: 180 },
@@ -344,16 +372,14 @@
 
             const cube = document.getElementById('cube');
             
-            // Накапливаем обороты, чтобы куб постоянно вращался вперед
-            totalX += (Math.floor(Math.random() * 5) + 6) * 360;
-            totalY += (Math.floor(Math.random() * 5) + 6) * 360;
+            totalX += (Math.floor(Math.random() * 6) + 8) * 360;
+            totalY += (Math.floor(Math.random() * 6) + 8) * 360;
 
             let finalX = totalX + targetRotations[resultNumber].x;
             let finalY = totalY + targetRotations[resultNumber].y;
 
             cube.style.transform = `translateZ(-65px) rotateX(${finalX}deg) rotateY(${finalY}deg)`;
 
-            // Ровно 5 секунд плавной анимации
             setTimeout(() => {
                 let isEven = resultNumber % 2 === 0;
                 let userWon = (currentChoice === 'even' && isEven) || (currentChoice === 'odd' && !isEven);
@@ -361,9 +387,9 @@
                 if (userWon) {
                     let winAmount = bet * 2;
                     balance += winAmount;
-                    alert(`🎉 Выпало число ${resultNumber}! Вы выиграли ${winAmount} 💎!`);
+                    alert(`✨ УСПЕХ! Выпало ${resultNumber}. Ваш выигрыш: ${winAmount} 💎!`);
                 } else {
-                    alert(`😢 Выпало число ${resultNumber}. Вы проиграли ставку.`);
+                    alert(`🎲 Выпало ${resultNumber}. Ставка не сыграла.`);
                 }
 
                 updateBalance();
@@ -392,13 +418,13 @@
             }
 
             bonusBtn.disabled = false;
-            bonusTimer.innerText = "Бонус доступен!";
+            bonusTimer.innerText = "Бонус доступен в кассе!";
             return true;
         }
 
         function addBonus() {
             if (!checkBonusTimer()) {
-                alert('Бонус доступен раз в 24 часа!');
+                alert('Бонус можно получать один раз в 24 часа!');
                 return;
             }
 
@@ -406,7 +432,7 @@
             updateBalance();
             localStorage.setItem('lastBonusTime', new Date().getTime().toString());
             checkBonusTimer();
-            alert('🎉 Получен бонус +500 фишек!');
+            alert('🎉 Бонус успешно получен: +500 фишек!');
         }
 
         checkBonusTimer();
