@@ -32,13 +32,12 @@
             overflow: hidden; 
         }
         
-        /* Футуристичное модальное окно */
+        /* Модальное окно */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(3, 6, 4, 0.85); backdrop-filter: blur(16px); display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
         .modal-card { background: linear-gradient(145deg, #163827, #0b1c14); border: 1.5px solid var(--gold); border-radius: 28px; padding: 35px 24px; text-align: center; max-width: 340px; box-shadow: 0 25px 50px rgba(0,0,0,0.8), 0 0 30px rgba(243, 206, 115, 0.2); }
         .modal-card h2 { color: var(--gold); margin-bottom: 12px; font-size: 26px; font-weight: 900; letter-spacing: 0.5px; }
         .modal-card p { font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 24px; }
         
-        /* Главная кнопка */
         .btn-main { 
             background: var(--gold-gradient); 
             color: #06110b; 
@@ -57,17 +56,14 @@
         .btn-main:active { transform: scale(0.96); filter: brightness(0.9); }
         .btn-main:disabled { background: #15291f; color: #436352; box-shadow: none; cursor: not-allowed; }
 
-        /* Верхняя панель */
         .header { background: rgba(10, 20, 15, 0.8); backdrop-filter: blur(15px); padding: 14px 20px; border-bottom: 1px solid var(--border-glass); display: flex; justify-content: space-between; align-items: center; z-index: 10; }
         .logo { font-weight: 900; color: var(--gold); font-size: 18px; letter-spacing: 2px; text-transform: uppercase; text-shadow: 0 0 10px rgba(243, 206, 115, 0.3); }
         .balance-badge { background: rgba(18, 38, 28, 0.9); border: 1.5px solid var(--border-glass); padding: 7px 16px; border-radius: 30px; color: var(--gold); font-weight: 800; font-size: 14px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 8px; backdrop-filter: blur(5px); }
 
-        /* Контент */
         .content { flex: 1; padding: 16px 20px; overflow-y: auto; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .tab-page { display: none; width: 100%; text-align: center; max-width: 380px; }
         .tab-page.active { display: flex; flex-direction: column; align-items: center; }
 
-        /* Игровая зона (Стеклянная карточка) */
         .game-card {
             width: 100%;
             background: var(--surface);
@@ -82,10 +78,10 @@
             align-items: center;
         }
 
-        /* 3D Сцена */
+        /* ИДЕАЛЬНО ЗАКРЫТЫЙ 3D КУБ БЕЗ ДЫРОК */
         .scene { 
-            width: 110px; 
-            height: 110px; 
+            width: 120px; 
+            height: 120px; 
             perspective: 1000px; 
             margin: 5px auto 15px auto; 
         }
@@ -94,42 +90,52 @@
             height: 100%; 
             position: relative; 
             transform-style: preserve-3d; 
-            transform: translateZ(-55px);
+            transform: translateZ(-60px);
             transition: transform 5s cubic-bezier(0.15, 0.85, 0.15, 1);
         }
         
         .cube-face { 
             position: absolute; 
-            width: 110px; 
-            height: 110px; 
-            background: #faf6ed; 
-            border: 1px solid #dcd4c1;
-            border-radius: 16px; 
+            width: 120px; 
+            height: 120px; 
+            background: #fdfbf7; 
+            border: 2px solid #e0d8c3;
+            border-radius: 20px; 
             display: grid;
             grid-template: repeat(3, 1fr) / repeat(3, 1fr);
-            padding: 12px;
+            padding: 14px;
             backface-visibility: hidden;
-            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.15);
+            -webkit-backface-visibility: hidden;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Псевдоэлемент для заливки ребер и полного устранения щелей */
+        .cube-face::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            background: #fdfbf7;
+            border-radius: 20px;
+            z-index: -1;
         }
 
         .dot { 
             background: #1a1a1a; 
             border-radius: 50%; 
-            width: 16px; 
-            height: 16px; 
+            width: 18px; 
+            height: 18px; 
             margin: auto;
             box-shadow: inset 0 2px 3px rgba(0,0,0,0.5);
         }
         .dot.gold { background: #b8860b; }
 
-        .cube-face-1  { transform: rotateY(0deg) translateZ(55px); }
-        .cube-face-6  { transform: rotateY(180deg) translateZ(55px); }
-        .cube-face-3  { transform: rotateY(90deg) translateZ(55px); }
-        .cube-face-4  { transform: rotateY(-90deg) translateZ(55px); }
-        .cube-face-2  { transform: rotateX(90deg) translateZ(55px); }
-        .cube-face-5  { transform: rotateX(-90deg) translateZ(55px); }
+        .cube-face-1  { transform: rotateY(0deg) translateZ(60px); }
+        .cube-face-6  { transform: rotateY(180deg) translateZ(60px); }
+        .cube-face-3  { transform: rotateY(90deg) translateZ(60px); }
+        .cube-face-4  { transform: rotateY(-90deg) translateZ(60px); }
+        .cube-face-2  { transform: rotateX(90deg) translateZ(60px); }
+        .cube-face-5  { transform: rotateX(-90deg) translateZ(60px); }
 
-        /* Переключатели Чёт / Нечёт */
         .choice-grid { display: flex; gap: 10px; width: 100%; }
         .choice-item { 
             flex: 1; 
@@ -151,7 +157,6 @@
         }
         .choice-item.selected .title { color: var(--gold); }
 
-        /* Блок ставок */
         .bet-card { 
             width: 100%; 
             background: var(--surface);
@@ -189,15 +194,12 @@
             outline: none; 
             box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
         }
-        .bet-input-box:focus { border-color: var(--gold); }
 
-        /* Админ панель */
         .admin-panel { background: var(--surface); backdrop-filter: blur(15px); border: 1.5px dashed var(--gold); border-radius: 24px; padding: 20px; width: 100%; text-align: left; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
         .admin-panel h4 { color: var(--gold); margin-bottom: 16px; text-align: center; font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 900; }
         .admin-line { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; font-size: 13px; font-weight: 700; color: var(--text-main); }
         .admin-line select, .admin-line button { background: #10261c; color: var(--gold); border: 1.5px solid var(--gold); padding: 9px 14px; border-radius: 12px; cursor: pointer; font-weight: 800; font-size: 12px; }
 
-        /* Навигация (Нижний Dock) */
         .nav-dock { display: flex; background: rgba(6, 12, 9, 0.95); backdrop-filter: blur(20px); border-top: 1px solid var(--border-glass); height: 74px; padding-bottom: 6px; z-index: 10; }
         .dock-item { flex: 1; background: none; border: none; color: var(--text-muted); font-size: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; transition: 0.25s; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
         .dock-item.active { color: var(--gold); text-shadow: 0 0 12px rgba(243, 206, 115, 0.4); }
@@ -221,7 +223,6 @@
     </div>
 
     <div class="content">
-        <!-- Стол с кубиком -->
         <div id="tab-games" class="tab-page active">
             
             <div class="game-card">
@@ -287,7 +288,6 @@
             <button class="btn-main" id="rollBtn" onclick="rollDice()">Бросить кубик (5 сек) 🎲</button>
         </div>
 
-        <!-- Кошелек / Касса -->
         <div id="tab-wallet" class="tab-page">
             <div class="game-card" style="width: 100%;">
                 <span class="section-label" style="text-align: center;">Касса клуба</span>
@@ -298,7 +298,6 @@
             <p id="bonusTimer" style="margin-top: 16px; font-size: 12px; color: var(--text-muted); font-weight: 600;"></p>
         </div>
 
-        <!-- Админ панель -->
         <div id="tab-profile" class="tab-page">
             <div class="admin-panel">
                 <h4>Панель организатора</h4>
@@ -425,9 +424,9 @@
             totalY += (Math.floor(Math.random() * 6) + 8) * 360;
 
             let finalX = totalX + targetRotations[resultNumber].x;
-            let finalY = totalY + targetRotations[resultNumber].y;
+            let finalY = totalY + targetRotations[resultNumber],y;
 
-            cube.style.transform = `translateZ(-55px) rotateX(${finalX}deg) rotateY(${finalY}deg)`;
+            cube.style.transform = `translateZ(-60px) rotateX(${finalX}deg) rotateY(${finalY}deg)`;
 
             setTimeout(() => {
                 let isEven = resultNumber % 2 === 0;
