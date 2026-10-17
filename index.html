@@ -14,7 +14,9 @@
         .modal-card { background: linear-gradient(145deg, #1a1d24, #121419); border: 1px solid #d4af37; border-radius: 16px; padding: 25px; text-align: center; max-width: 320px; box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2); }
         .modal-card h2 { color: #d4af37; margin-bottom: 12px; font-size: 22px; }
         .modal-card p { font-size: 14px; color: #cccccc; line-height: 1.5; margin-bottom: 20px; }
-        .btn-gold { background: linear-gradient(45deg, #d4af37, #f3e5ab); color: #000; border: none; padding: 12px 24px; font-weight: bold; border-radius: 8px; font-size: 15px; cursor: pointer; width: 100%; }
+        .btn-gold { background: linear-gradient(45deg, #d4af37, #f3e5ab); color: #000; border: none; padding: 12px 24px; font-weight: bold; border-radius: 8px; font-size: 15px; cursor: pointer; width: 100%; transition: 0.2s; }
+        .btn-gold:active { transform: scale(0.96); }
+        .btn-gold:disabled { opacity: 0.5; cursor: not-allowed; }
 
         /* Шапка с балансом */
         .header { background: #161920; padding: 15px; text-align: center; border-bottom: 1px solid #262a36; display: flex; justify-content: space-between; align-items: center; }
@@ -23,12 +25,33 @@
 
         /* Контент вкладок */
         .content { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .tab-page { display: none; width: 100%; text-align: center; }
+        .tab-page { display: none; width: 100%; text-align: center; max-width: 400px; }
         .tab-page.active { display: block; }
 
         /* Слот машина */
-        .slots-container { background: #161920; border: 2px solid #262a36; border-radius: 12px; padding: 20px; margin: 20px 0; display: flex; justify-content: center; gap: 10px; }
-        .slot { width: 60px; height: 70px; background: #0d0f12; border: 1px solid #d4af37; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 32px; }
+        .slots-container { background: #161920; border: 2px solid #262a36; border-radius: 12px; padding: 20px; margin: 15px 0; display: flex; justify-content: center; gap: 10px; box-shadow: inset 0 5px 15px rgba(0,0,0,0.5); }
+        .slot { width: 70px; height: 80px; background: #0d0f12; border: 1px solid #d4af37; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 36px; transition: transform 0.1s; }
+        .slot.spinning { animation: shake 0.1s infinite; }
+
+        @keyframes shake {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0); }
+        }
+
+        /* Выбор ставки */
+        .bet-control { background: #161920; border: 1px solid #262a36; border-radius: 12px; padding: 12px; margin-bottom: 15px; }
+        .bet-title { font-size: 13px; color: #aaa; margin-bottom: 8px; }
+        .bet-buttons { display: flex; gap: 6px; margin-bottom: 8px; justify-content: center; }
+        .bet-btn { background: #222733; border: 1px solid #d4af37; color: #f3e5ab; padding: 6px 10px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; }
+        .bet-btn:active { background: #d4af37; color: #000; }
+        .bet-input { width: 100%; background: #0d0f12; border: 1px solid #d4af37; color: #fff; padding: 8px; border-radius: 6px; text-align: center; font-size: 16px; font-weight: bold; }
+
+        /* Админ панель элементы */
+        .admin-box { background: #161920; border: 1px dashed #d4af37; border-radius: 12px; padding: 15px; margin-top: 10px; text-align: left; }
+        .admin-box h4 { color: #d4af37; margin-bottom: 10px; text-align: center; }
+        .admin-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 14px; }
+        .admin-row select, .admin-row button { background: #222733; color: #fff; border: 1px solid #d4af37; padding: 6px 10px; border-radius: 6px; cursor: pointer; }
 
         /* Нижняя навигация (Вкладки) */
         .nav-tabs { display: flex; background: #161920; border-top: 1px solid #262a36; height: 60px; }
@@ -59,25 +82,54 @@
         <!-- Вкладка 1: Игры -->
         <div id="tab-games" class="tab-page active">
             <h3>Слот-Машина</h3>
+            
             <div class="slots-container">
                 <div class="slot" id="s1">🎰</div>
                 <div class="slot" id="s2">🎰</div>
                 <div class="slot" id="s3">🎰</div>
             </div>
-            <button class="btn-gold" onclick="spinSlots()">Крутить (100 💰)</button>
+
+            <!-- Управление ставкой -->
+            <div class="bet-control">
+                <div class="bet-title">Размер ставки (Выигрыш x10):</div>
+                <div class="bet-buttons">
+                    <button class="bet-btn" onclick="setBet(100)">100</button>
+                    <button class="bet-btn" onclick="setBet(250)">250</button>
+                    <button class="bet-btn" onclick="setBet(500)">500</button>
+                    <button class="bet-btn" onclick="setBet(1000)">1000</button>
+                </div>
+                <input type="number" id="betAmount" class="bet-input" value="100" min="10" step="10">
+            </div>
+
+            <button class="btn-gold" id="spinBtn" onclick="spinSlots()">Крутить слоты 🎰</button>
         </div>
 
-        <!-- Вкладка 2: Баланс -->
+        <!-- Вкладка 2: Кошелек -->
         <div id="tab-wallet" class="tab-page">
-            <h3>Ваш Баланс</h3>
+            <h3>Кошелек</h3>
             <p style="margin: 15px 0; color: #aaa;">У вас на счету: <b id="walletBalance" style="color:#d4af37;">1000</b> фишек</p>
-            <button class="btn-gold" onclick="addBonus()">Забрать дневной бонус (+500 💰)</button>
+            <button class="btn-gold" id="bonusBtn" onclick="addBonus()">Забрать дневной бонус (+500 💰)</button>
+            <p id="bonusTimer" style="margin-top: 10px; font-size: 12px; color: #888;"></p>
         </div>
 
-        <!-- Вкладка 3: Профиль -->
+        <!-- Вкладка 3: Админ-панель -->
         <div id="tab-profile" class="tab-page">
-            <h3>Профиль Игрока</h3>
-            <p style="margin-top: 15px; color: #aaa;">Статус: <span style="color:#d4af37;">Игрок PavelCasino</span></p>
+            <h3>⚙️ Админ-Панель</h3>
+            <div class="admin-box">
+                <h4>Управление игрой</h4>
+                <div class="admin-row">
+                    <span>Накрутка баланса:</span>
+                    <button onclick="adminAddMoney()" style="background:#d4af37; color:#000; font-weight:bold;">+10,000 💰</button>
+                </div>
+                <div class="admin-row" style="margin-top: 15px;">
+                    <span>Шанс победы:</span>
+                    <select id="winChance" onchange="changeChance()">
+                        <option value="random">Обычный (Рандом)</option>
+                        <option value="win">100% Победа (Джекпот)</option>
+                        <option value="lose">0% (Всегда проигрыш)</option>
+                    </select>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -90,16 +142,22 @@
             <span>💰</span> Баланс
         </button>
         <button class="tab-btn" onclick="switchTab('profile', this)">
-            <span>👤</span> Профиль
+            <span>⚙️</span> Админ
         </button>
     </div>
 
     <script>
         let balance = 1000;
+        let currentMode = 'random'; // Режимы: random, win, lose
         const symbols = ['🎰', '7️⃣', '💎', '🍋', '🔔'];
 
         function closeModal() {
             document.getElementById('welcomeModal').style.display = 'none';
+            checkBonusTimer();
+        }
+
+        function setBet(amount) {
+            document.getElementById('betAmount').value = amount;
         }
 
         function switchTab(tabName, btn) {
@@ -108,6 +166,7 @@
             
             document.getElementById('tab-' + tabName).classList.add('active');
             btn.classList.add('active');
+            if (tabName === 'wallet') checkBonusTimer();
         }
 
         function updateBalance() {
@@ -115,34 +174,125 @@
             document.getElementById('walletBalance').innerText = balance;
         }
 
+        function adminAddMoney() {
+            balance += 10000;
+            updateBalance();
+            alert('⚙️ Админ: Начислено 10,000 фишек!');
+        }
+
+        function changeChance() {
+            currentMode = document.getElementById('winChance').value;
+        }
+
         function spinSlots() {
-            if (balance < 100) {
-                alert('Недостаточно баланса!');
+            const betInput = document.getElementById('betAmount');
+            let bet = parseInt(betInput.value);
+
+            if (isNaN(bet) || bet <= 0) {
+                alert('Введите корректную сумму ставки!');
                 return;
             }
-            balance -= 100;
+
+            if (balance < bet) {
+                alert('Недостаточно баланса для этой ставки!');
+                return;
+            }
+
+            balance -= bet;
             updateBalance();
 
-            const r1 = symbols[Math.floor(Math.random() * symbols.length)];
-            const r2 = symbols[Math.floor(Math.random() * symbols.length)];
-            const r3 = symbols[Math.floor(Math.random() * symbols.length)];
+            const btn = document.getElementById('spinBtn');
+            btn.disabled = true;
 
-            document.getElementById('s1').innerText = r1;
-            document.getElementById('s2').innerText = r2;
-            document.getElementById('s3').innerText = r3;
+            const s1 = document.getElementById('s1');
+            const s2 = document.getElementById('s2');
+            const s3 = document.getElementById('s3');
 
-            if (r1 === r2 && r2 === r3) {
-                balance += 1000;
-                alert('🎉 ДЖЕКПОТ! Вы выиграли 1000 фишек!');
-                updateBalance();
+            // Включаем анимацию
+            s1.classList.add('spinning');
+            s2.classList.add('spinning');
+            s3.classList.add('spinning');
+
+            let interval = setInterval(() => {
+                s1.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+                s2.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+                s3.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+            }, 80);
+
+            setTimeout(() => {
+                clearInterval(interval);
+                s1.classList.remove('spinning');
+                s2.classList.remove('spinning');
+                s3.classList.remove('spinning');
+
+                let r1, r2, r3;
+
+                if (currentMode === 'win') {
+                    r1 = '7️⃣'; r2 = '7️⃣'; r3 = '7️⃣';
+                } else if (currentMode === 'lose') {
+                    r1 = '7️⃣'; r2 = '🍋'; r3 = '💎';
+                } else {
+                    r1 = symbols[Math.floor(Math.random() * symbols.length)];
+                    r2 = symbols[Math.floor(Math.random() * symbols.length)];
+                    r3 = symbols[Math.floor(Math.random() * symbols.length)];
+                }
+
+                s1.innerText = r1;
+                s2.innerText = r2;
+                s3.innerText = r3;
+
+                if (r1 === r2 && r2 === r3) {
+                    let winAmount = bet * 10;
+                    balance += winAmount;
+                    alert(`🎉 ДЖЕКПОТ! Вы выиграли ${winAmount} 💰!`);
+                    updateBalance();
+                }
+
+                btn.disabled = false;
+            }, 1000);
+        }
+
+        // Логика ежедневного бонуса (1 раз в 24 часа)
+        function checkBonusTimer() {
+            const lastBonus = localStorage.getItem('lastBonusTime');
+            const bonusBtn = document.getElementById('bonusBtn');
+            const bonusTimer = document.getElementById('bonusTimer');
+
+            if (lastBonus) {
+                const now = new Date().getTime();
+                const timePassed = now - parseInt(lastBonus);
+                const twentyFourHours = 24 * 60 * 60 * 1000;
+
+                if (timePassed < twentyFourHours) {
+                    bonusBtn.disabled = true;
+                    const timeLeft = twentyFourHours - timePassed;
+                    const hours = Math.floor(timeLeft / (1000 * 60 * 60));
+                    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                    bonusTimer.innerText = `Следующий бонус через: ${hours}ч ${minutes}мин`;
+                    return false;
+                }
             }
+
+            bonusBtn.disabled = false;
+            bonusTimer.innerText = "Бонус доступен!";
+            return true;
         }
 
         function addBonus() {
+            if (!checkBonusTimer()) {
+                alert('Бонус можно брать только 1 раз в 24 часа!');
+                return;
+            }
+
             balance += 500;
-            alert('Вы получили +500 бонусов!');
             updateBalance();
+            localStorage.setItem('lastBonusTime', new Date().getTime().toString());
+            checkBonusTimer();
+            alert('🎉 Вы получили ежедневный бонус +500 фишек!');
         }
+
+        // Инициализация при старте
+        checkBonusTimer();
     </script>
 </body>
 </html>
